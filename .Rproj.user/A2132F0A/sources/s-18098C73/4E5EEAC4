@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1582563436461.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "4E5EEAC4",
+    "lastKnownWriteTime" : 1582604221,
+    "last_content_update" : 1582604221777,
+    "path" : "~/Desktop/fcp/R/wrapfcp.R",
+    "project_path" : "R/wrapfcp.R",
+    "properties" : {
+        "cursorPosition" : "45,0",
+        "scrollLine" : "25",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

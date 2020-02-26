@@ -1,0 +1,83 @@
+xx = c(rnorm(5,mean=-3), rnorm(6, mean=10), rnorm(5, mean=0))
+
+# K : number of segments (#cp + 1)
+cost.lm <- function(y){ # cost : SSE
+  ny = length(y)
+  x  = 1:ny
+  return(sum(lm(y~x)$residuals^2))
+}
+cost.mean <- function(y){
+  return(sum((y-mean(y))^2))
+}
+
+dynProg.mean <- function(y, Kmax, Lmin=1, lambda=0) 
+{
+  Nr  <- Kmax - 1
+  n <- length(y)
+  V <- matrix(Inf, nrow = n, ncol = n)
+  for (j1 in (1:(n-Lmin+1))){
+    for (j2 in ((j1+Lmin-1):n)) {
+      yj <- y[j1:j2]
+      nj <- j2-j1+1
+      V[j1,j2] <- cost.mean(yj) + lambda
+      # V[j1,j2] <- compute.sse(yj) # fitting linear model
+      # V[j1,j2] <- sum(yj^2) - (sum(yj)^2)/nj + lambda# == sum((yj-mean(yj))^2); non-normalized error
+    }
+  }
+  
+  U <- vector(length=Kmax)
+  U[1] <- V[1,n]
+  D <- V[,n] 
+  Pos <- matrix(nrow = n, ncol = Nr) 
+  Pos[n,] <- rep(n,Nr)    
+  tau.mat <- matrix(nrow = Nr,ncol = Nr) 
+  for (k in 1:Nr){
+    for (j in 1:(n-1)){
+      dist <- V[j,j:(n-1)] + D[(j+1):n]
+      D[j] <- min(dist)
+      Pos[j,1] <- which.min(dist) + j
+      if (k > 1) { Pos[j,2:k] <- Pos[Pos[j,1],1:(k-1)] }
+    }
+    U[k+1] <- D[1]
+    tau.mat[k,1:k] <- Pos[1,1:k]-1
+  }
+  out <- list(Test=tau.mat, obj=data.frame(K=((1:Kmax)),U=U))
+  return(out)
+}
+
+xout = dynProg.mean(xx, Kmax=10, Lmin=1)
+
+# k=1
+x1 = xx[1:5]
+x2 = xx[6:length(xx)]
+sum((x1-mean(x1))^2) + sum((x2-mean(x2))^2)
+
+# k=2
+x1 = xx[1:5]
+x2 = xx[6:11]
+x3 = xx[12:length(xx)]
+sum((x1-mean(x1))^2) + sum((x2-mean(x2))^2) + sum((x3-mean(x3))^2)
+
+
+# test with 'RcppDynDiag' -------------------------------------------------
+library(microbenchmark)
+library(RcppDynProg)
+
+xx = c(rnorm(5,mean=-3), rnorm(6, mean=10), rnorm(5, mean=0))
+nx = length(xx)
+gamma = 10
+costs <- array(NA, c(nx,nx))
+for (i in 1:nx){
+  for (j in i:nx){
+    costs[i,j] <- cost.mean(xx[i:j]) + gamma
+  }
+}
+soln <- solve_interval_partition(costs, nrow(costs))
+lapply(
+  seq_len(length(soln)-1),
+  function(i) {
+    soln[i]:(soln[i+1]-1)
+  })
+
+# let's compare with the R program
+dynProg.mean(xx, Kmax=10, Lmin=1, lambda=gamma)

@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1582602493485.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "2F14B6A",
+    "lastKnownWriteTime" : 1582654682,
+    "last_content_update" : 1582654682551,
+    "path" : "~/Desktop/fcp/R/nfcp.R",
+    "project_path" : "R/nfcp.R",
+    "properties" : {
+        "cursorPosition" : "88,0",
+        "scrollLine" : "59",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
