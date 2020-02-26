@@ -5,17 +5,28 @@
 
 # (1) dynprog_main --------------------------------------------------------
 #' @keywords internal
-dynprog_main <- function(listfcp, Kmax=min(10,length(listfcp)), Lmin=1, gamma=0){
+dynprog_main <- function(listfcp, Kmax=min(10,length(listfcp)), Lmin=1, gamma=0, print.progress=TRUE){
   # prepare
   Nr = round(Kmax - 1)
   n  = length(listfcp)
   V  = array(Inf, c(n,n))
   
   # compute the cost
+  totaliter = 0
+  for (j1 in 1:(n-Lmin+1)){
+    for (j2 in ((j1+Lmin-1):n)){
+      totaliter = totaliter + 1
+    }
+  }
+  iter = 0
   for (j1 in 1:(n-Lmin+1)){
     for (j2 in ((j1+Lmin-1):n)){
       partfcp  = listfcp[j1:j2]
-      V[j1,j2] = dynprog_nfcp(partfcp) + gamma # cost + penalty
+      V[j1,j2] = dynprog_nfcp(partfcp) + gamma # cost + penalty / maybe add later
+      iter = iter + 1
+      if (print.progress){
+        print(paste0("* nfcp : iteration for kernel ridge regression ",iter,"/",totaliter," complete..."))  
+      }
     }
   }
   
@@ -36,6 +47,8 @@ dynprog_main <- function(listfcp, Kmax=min(10,length(listfcp)), Lmin=1, gamma=0)
     U[k+1] <- D[1]
     tau.mat[k,1:k] <- Pos[1,1:k]-1
   }
+  ## this part for adding (|P|-1)*gamma
+  U = U - gamma
   out <- list(Test=tau.mat, obj=data.frame(K=((1:Kmax)),U=U))
   return(out)
 }

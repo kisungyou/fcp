@@ -4,7 +4,12 @@
 \alias{nfcp}
 \title{Nonparametric Change Point Detection}
 \usage{
-nfcp(obj.fcp, Kmax = min(5, (length(obj.fcp) - 1)), gamma = 5)
+nfcp(
+  obj.fcp,
+  Kmax = min(5, (length(obj.fcp) - 1)),
+  gamma = 5,
+  print.progress = TRUE
+)
 }
 \description{
 Nonparametric Change Point Detection

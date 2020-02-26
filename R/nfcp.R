@@ -1,7 +1,7 @@
 #' Nonparametric Change Point Detection
 #' 
 #' @export
-nfcp <- function(obj.fcp, Kmax=min(5, (length(obj.fcp)-1)), gamma=5){
+nfcp <- function(obj.fcp, Kmax=min(5, (length(obj.fcp)-1)), gamma=5, print.progress=TRUE){
   ##################################################
   # Check the inputs
   if (!inherits(obj.fcp,"fcp")){
@@ -13,10 +13,11 @@ nfcp <- function(obj.fcp, Kmax=min(5, (length(obj.fcp)-1)), gamma=5){
   mygamma = as.double(gamma)
   myKmax  = round(Kmax)
   myLmin  = 1
+  myprint = as.logical(print.progress)
   
   ##################################################
   # Run the main function
-  fcpout = dynprog_main(obj.fcp, Kmax=myKmax, Lmin=myLmin, gamma=mygamma)
+  fcpout = dynprog_main(obj.fcp, Kmax=myKmax, Lmin=myLmin, gamma=mygamma, print.progress=myprint)
   
   ##################################################
   # Prepare the output
@@ -47,25 +48,26 @@ nfcp <- function(obj.fcp, Kmax=min(5, (length(obj.fcp)-1)), gamma=5){
 # list.f = list()
 # label  = c()
 # for (i in 1:5){
-#   tt = sort(rnorm(50))
+#   tt = sort(runif(10, min=0, max=10), decreasing = FALSE)
 #   list.t[[i]] = tt
 #   list.f[[i]] = cos(tt) + rnorm(length(tt), sd=0.1)
 #   label = c(label, 1)
 # }
 # for (i in 6:15){
-#   tt = sort(rnorm(50))
+#   tt = sort(runif(10, min=0, max=10), decreasing = FALSE)
 #   list.t[[i]] = tt
 #   list.f[[i]] = sin(2*tt) + rnorm(length(tt), sd=0.1)
 #   label = c(label, 2)
 # }
 # for (i in 16:20){
-#   tt = sort(rnorm(50))
+#   tt = sort(runif(10, min=0, max=10), decreasing = FALSE)
 #   list.t[[i]] = tt
 #   list.f[[i]] = cos(3*tt)*sin(tt) + rnorm(length(tt), sd=0.1)
 #   label = c(label, 3)
 # }
 # fcpobj <- wrapfcp(list.t, list.f)
-# fcpout <- nfcp(fcpobj, Kmax=10, gamma=5)
+# fcpout0 <- nfcp(fcpobj, Kmax=5, gamma=0)
+# fcpout5 <- nfcp(fcpobj, Kmax=5, gamma=5)
 # 
 # # plot.x = fcpobj[[1]]$f
 # # plot.x = (plot.x/abs(max(plot.x)))*0.5 + 1
